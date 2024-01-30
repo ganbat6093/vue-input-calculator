@@ -15,7 +15,34 @@
                  type="text"
                  class="calculator-input"
                  v-model="expresion">
-
+<div class="calculator-row">
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('%')">%</button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('1/')">1/x</button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('x2')">x<sup style="font-size: 16px;">2</sup></button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('√')">√</button>
+            </div>
+          </div>
+          <div class="calculator-row">
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('^')">10<sup style="font-size: 16px;">n</sup></button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('(')">(</button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler(')')">)</button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('√')">√</button>
+            </div>
+          </div>
           <div class="calculator-row">
             <div class="calculator-col">
               <button class="calculator-btn gray action" @click="clear()">c</button>
@@ -27,20 +54,7 @@
               <button class="calculator-btn accent action" @click="touchHandler('/')">/</button>
             </div>
           </div>
-          <div class="calculator-row">
-            <div class="calculator-col">
-              <button class="calculator-btn accent action" @click="touchHandler('%')">%</button>
-            </div>
-            <div class="calculator-col">
-              <button class="calculator-btn accent action" @click="touchHandler('1x')">1/x</button>
-            </div>
-            <div class="calculator-col">
-              <button class="calculator-btn accent action" @click="touchHandler('x2')">x<sup>2</sup></button>
-            </div>
-            <div class="calculator-col">
-              <button class="calculator-btn accent action" @click="touchHandler('√')">√</button>
-            </div>
-          </div>
+          
           <div class="calculator-row">
             <div class="calculator-col">
               <button class="calculator-btn" @click="touchHandler('7')">7</button>
@@ -106,6 +120,9 @@
 </template>
 
 <script>
+import { create, all } from "mathjs";
+const math = create(all);
+
 export default {
   name: "CalculatorInterface",
   emits: ['hide','update:modelValue'],
@@ -159,8 +176,10 @@ export default {
       // последний симовол выражения
       let lastSimbol = this.expresion.slice(-1);
       let lastSimbolIsAction = Number.isNaN(Number.parseInt(lastSimbol));
-
-      // console.log({value, expresion: this.expresion, inputIsAction, lastSimbolIsAction, lastSimbol});
+if(lastSimbol==")" || lastSimbol=="("){
+  lastSimbolIsAction=false;
+}
+       console.log({value, expresion: this.expresion, inputIsAction, lastSimbolIsAction, lastSimbol});
 
       // если выражение не изменялось и пытаются ввести 0 - игнорим
       if (this.expresion === '0') {
@@ -173,26 +192,32 @@ export default {
       }
 
       switch (true) {
-        case inputIsAction && lastSimbolIsAction && value !== '.' && value !== '=':
+        case inputIsAction && lastSimbolIsAction && value !== '.' && value !== '=' && value !== ')':
+          console.log("sw 1");
           // console.error(1);
           // провожу замену последнего символа
           this.expresion = this.expresion.slice(0, -1) + value;
           break;
         case inputIsAction && value === '=':
+          console.log("sw 2");
           // console.error(2, this.isResult);
           // проверю наличие незавершенного выражения - мат действия в конце
           // при наличии удаляю знак c конца и провожу вычисления
           if (lastSimbolIsAction) {
             // console.error(21);
+            console.log("sw 3");
             this.expresion = this.expresion.slice(0, -1);
           }
           if (this.isResult) {
+            console.log("sw 4");
             this.applyResult()
           } else {
+            console.log("sw 5");
             this.calculate(); // расчитываю результат по выражению
           }
           break;
         case inputIsAction && value === '.':
+          console.log("sw 6");
           // console.error(3);
           // если знак . присутствует - игнорю
           if (Array.isArray(this.expresion.split(/[/*\-+]/)) && (this.expresion.split(/[/*\-+]/).slice(-1)[0].indexOf('.') > -1 || lastSimbolIsAction)) {
@@ -210,26 +235,28 @@ export default {
       }
     },
     calculate() {
+      console.log("calc started", math)
       let log = this.expresion;
-
+console.log("calc started 1")
       // Разобрать выражение на части спарсить числа и собрать снова
       // используя parseFloat - чтобы не было ошибок с 5+09 = ERROR
-      let regex = /[/*\-+]/g;
+      let regex = /[/*\-+%^()]/g;
       let actions = this.expresion.match(regex);
       if (!actions) {
         return this.isResult = true;
       }
-      let numbers = this.expresion.split(regex);
-      this.expresion = numbers.reduce((str, currNum, index) => {
-        // если выражение начинается с отрицательного значения "-"
-        // то игнорю пустое текущее значение и поставим только знак действия
-        if (currNum) {
-          str = str + parseFloat(currNum) + (actions[index] || '');
-        } else {
-          str = str + (actions[index] || '');
-        }
-        return str
-      }, "");
+      console.log("calc started 2")
+      //let numbers = this.expresion.split(regex);
+      // this.expresion = numbers.reduce((str, currNum, index) => {
+      //   // если выражение начинается с отрицательного значения "-"
+      //   // то игнорю пустое текущее значение и поставим только знак действия
+      //   if (currNum) {
+      //     str = str + parseFloat(currNum) + (actions[index] || '');
+      //   } else {
+      //     str = str + (actions[index] || '');
+      //   }
+      //   return str
+      // }, "");
 
       // console.error({
       //   actions,
@@ -239,12 +266,16 @@ export default {
 
       // пробуем выполнить операцию
       try {
-        let result = eval(this.expresion);
+        console.log("calc started 3", this.expresion)
+        let result = math.evaluate(this.expresion);
+        console.log({result})
         // console.warn({result},Number.isInteger(result));
-        this.expresion = Number.isInteger(result) ? result.toString() : parseFloat(parseFloat(result).toFixed(this.floatResultFixedCount)).toString();
+        //this.expresion = Number.isInteger(result) ? result.toString() : parseFloat(parseFloat(result).toFixed(this.floatResultFixedCount)).toString();
         this.isResult = true;
-        this.logs.push(log + `=${this.expresion}`);
-      } catch {
+        this.logs.push(log + `=${result}`);
+      } catch (ex){
+        console.log(ex)
+
         // alert('Error eval: ' + this.expresion);
         this.error = true;
       }
