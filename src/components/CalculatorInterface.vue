@@ -29,6 +29,20 @@
           </div>
           <div class="calculator-row">
             <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('%')">%</button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('1x')">1/x</button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('x2')">x<sup>2</sup></button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="touchHandler('√')">√</button>
+            </div>
+          </div>
+          <div class="calculator-row">
+            <div class="calculator-col">
               <button class="calculator-btn" @click="touchHandler('7')">7</button>
             </div>
             <div class="calculator-col">
