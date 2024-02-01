@@ -77,7 +77,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lih1989/vue-input-calculator.git"
+    "url": "git+https://github.com/ganbat6093/vue-input-calculator.git"
   },
   "dependencies": {
     "mathjs": "^12.3.0"
