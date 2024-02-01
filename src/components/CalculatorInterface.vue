@@ -25,6 +25,33 @@
           />
           <div class="calculator-row">
             <div class="calculator-col">
+              <button class="calculator-btn gray action" @click="memory('mc')">
+                MC
+              </button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn gray action" @click="memory('mr')">
+                MR
+              </button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn gray action" @click="memory('m+')">
+                M+
+              </button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn gray action" @click="memory('m-')">
+                M-
+              </button>
+            </div>
+            <div class="calculator-col">
+              <button class="calculator-btn gray action" @click="memory('ms')">
+                MS
+              </button>
+            </div>
+          </div>
+          <div class="calculator-row">
+            <div class="calculator-col">
               <button
                 class="calculator-btn accent action"
                 @click="touchHandler('^')"
@@ -48,7 +75,7 @@
                 1/x
               </button>
             </div>
-            <div class="calculator-col ">
+            <div class="calculator-col">
               <button
                 class="calculator-btn gray action"
                 @click="deleteLastChar"
@@ -92,6 +119,20 @@
               </button>
             </div>
             <div class="calculator-col">
+              <button class="calculator-btn accent action" @click="calcLog()">
+                log
+              </button>
+            </div>
+            <div class="calculator-col">
+              <button
+                class="calculator-btn accent action"
+                @click="calcSqrt('√')"
+              >
+                √
+              </button>
+            </div>
+
+            <!-- <div class="calculator-col">
               <button
                 class="calculator-btn accent action"
                 @click="touchHandler('(')"
@@ -106,8 +147,8 @@
               >
                 )
               </button>
-            </div>
-            
+            </div> -->
+
             <div class="calculator-col">
               <button
                 class="calculator-btn accent action"
@@ -267,6 +308,10 @@ export default {
       expresion: "0",
       logs: [],
       error: false,
+      memoryData: {
+        saved: false,
+        value: 0,
+      },
     };
   },
   methods: {
@@ -364,6 +409,102 @@ export default {
           this.expresion += value;
           //console.error('prepareInput', value);
           break;
+      }
+    },
+    memory(val) {
+      let resultNotNumber = Number.isNaN(Number.parseInt(this.expresion));
+      switch (val) {
+        case "mc":
+          this.memoryData.saved = false;
+          this.memoryData.value = 0;
+          break;
+        case "m+":          
+          if (!resultNotNumber) {
+            this.memoryData.saved=true;
+            this.memoryData.value = this.memoryData.value + Number.parseInt(this.expresion);
+            if (this.autoApply) {
+          this.applyResult();
+        }
+          }
+          break;
+        case "m-":
+          
+          if (!resultNotNumber) {
+            this.memoryData.saved=true;
+            this.memoryData.value = this.memoryData.value - Number.parseInt(this.expresion);
+            if (this.autoApply) {
+          this.applyResult();
+        }
+          }
+          break;
+        case "ms":
+          if (!resultNotNumber) {
+            this.memoryData.saved=true;
+            this.memoryData.value = this.expresion;
+            if (this.autoApply) {
+              this.applyResult();
+            }
+          }
+          break;
+        case "mr":
+          if(this.memoryData.saved)
+          {
+            //this.clear();
+            this.expresion = this.expresion=="0" ? this.memoryData.value+"": this.expresion+  this.memoryData.value+"";
+            //this.prepareInput( this.memoryData.value);
+          }
+            
+          break;
+      }
+    },
+    calcSqrt() {
+      let log = this.expresion;
+      //console.log(this.expresion);
+      let resultNotNumber = Number.isNaN(Number.parseInt(this.expresion));
+      //console.log(resultNotNumber);
+      if (!resultNotNumber) {
+        //this.expresion = 'log()'
+        let result = math.sqrt(this.expresion);
+        log = `sqrt(${this.expresion})`;
+        this.expresion = result.toString();
+        this.isResult = true;
+        this.logs.push(log + `=${result}`);
+
+        this.$nextTick(() => {
+          if (this.$refs.historyLog) {
+            this.$refs.historyLog.scrollTop =
+              this.$refs.historyLog.scrollHeight;
+          }
+        });
+
+        if (this.autoApply) {
+          this.applyResult();
+        }
+      }
+    },
+    calcLog() {
+      let log = this.expresion;
+      console.log(this.expresion);
+      let resultNotNumber = Number.isNaN(Number.parseInt(this.expresion));
+      console.log(resultNotNumber);
+      if (!resultNotNumber) {
+        //this.expresion = 'log()'
+        let result = math.log(this.expresion, 10);
+        log = `log(${this.expresion})`;
+        this.expresion = result.toString();
+        this.isResult = true;
+        this.logs.push(log + `=${result}`);
+
+        this.$nextTick(() => {
+          if (this.$refs.historyLog) {
+            this.$refs.historyLog.scrollTop =
+              this.$refs.historyLog.scrollHeight;
+          }
+        });
+
+        if (this.autoApply) {
+          this.applyResult();
+        }
       }
     },
     calculate() {
