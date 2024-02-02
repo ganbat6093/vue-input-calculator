@@ -35,7 +35,7 @@
               </button>
             </div>
             <div class="calculator-col">
-              <button class="calculator-btn gray action" @click="memory('m+')">
+              <button class="calculator-btn gray action" @click="memory('m+')"> 
                 M+
               </button>
             </div>
