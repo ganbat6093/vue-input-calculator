@@ -1,6 +1,7 @@
 <template>
   <div :style="styleVars" class="vue-input-calculator">
     <transition name="slide">
+     
       <div
         :class="
           place === 'in-place' ? 'calc-wrapper-inplace' : 'calc-wrapper-fixed'
@@ -16,7 +17,7 @@
               >{{ log }}</span
             >
           </div>
-
+ {{enableKeyboard}}
           <input
             readonly
             type="text"
@@ -314,11 +315,17 @@ export default {
       },
     };
   },
+  mounted(){
+    document.addEventListener("keydown", this.keyboardHandler);
+  },
   methods: {
     keyboardHandler(event) {
+      console.log(event);
       let allowValue = event.key.match(/[0-9%/*\-+=.,]|Backspace|Enter/);
       let input = allowValue ? allowValue.input : null;
+      //console.log("input", input);
       if (input) {
+        console.log(input)
         // адаптация ключа клавиши под общий стандарт
         // заменим запятую на точку для универсальности при разных раскладках
         if (input === ",") input = ".";

@@ -18,6 +18,10 @@ export default {
       type: [Number, String],
       default: 0
     },
+    readonlyInput:{
+      type: Boolean,
+      default: true
+    },
     zIndex: {
       type: [Number, String],
       default: 9999
@@ -68,11 +72,11 @@ export default {
     },
     enableKeyboard: { // нужен ли ввод с клавиатуры
       type: Boolean,
-      default: false
+      default: true
     },
     place: {
       type: String,
-      default: 'modal'
+      default: 'in-place'
     }
   },
   data() {
