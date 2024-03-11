@@ -1,6 +1,6 @@
 {
   "name": "vue-input-calculator-advanced",
-  "version": "1.0.36",
+  "version": "1.0.46",
   "description": "Calculator input component. Mobile friendly.",
   "author": "Ivan Lihomanov <lih1989@yandex.ru>",
   "scripts": {

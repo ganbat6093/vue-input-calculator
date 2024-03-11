@@ -1,14 +1,15 @@
 <template>
-  <div :style="styleVars" class="vue-input-calculator">
+  <div :style="styleVars" class="vue-input-calculator" tabindex="0" @focus="handleFocus"
+    @blur="handleBlur">
     <transition name="slide">
-     
       <div
         :class="
           place === 'in-place' ? 'calc-wrapper-inplace' : 'calc-wrapper-fixed'
         "
         v-if="show"
       >
-        <div class="calculator">
+        <div class="calculator" >
+          <!-- {{enableKeyboard}} {{enableKeyboard}} -->
           <div class="calculator-logs" ref="historyLog" v-if="isHistoryLogs">
             <span
               v-for="(log, index) in logs"
@@ -35,7 +36,7 @@
               </button>
             </div>
             <div class="calculator-col">
-              <button class="calculator-btn gray action" @click="memory('m+')"> 
+              <button class="calculator-btn gray action" @click="memory('m+')">
                 M+
               </button>
             </div>
@@ -314,12 +315,24 @@ export default {
       },
     };
   },
-  mounted(){
+  mounted() {
     if (this.enableKeyboard) {
-    document.addEventListener("keydown", this.keyboardHandler);
+      //console.log('mounteds add hiiv!');
+      document.addEventListener("keydown", this.keyboardHandler);
     }
   },
   methods: {
+    handleFocus() {
+      //this.enableKeyboard=true;
+      //console.log('Div focused! s');
+      // Add your focus event handling logic here
+    },
+    handleBlur() {
+      //this.$emit('enable', false)
+      //this.enableKeyboard=false;
+      //console.log('Div blurred!');
+      // Add your blur event handling logic here
+    },
     keyboardHandler(event) {
       //console.log(event);
       let allowValue = event.key.match(/[0-9%/*\-+=.,]|Backspace|Enter/);
@@ -426,28 +439,29 @@ export default {
           this.memoryData.saved = false;
           this.memoryData.value = 0;
           break;
-        case "m+":          
+        case "m+":
           if (!resultNotNumber) {
-            this.memoryData.saved=true;
-            this.memoryData.value = this.memoryData.value + Number.parseInt(this.expresion);
+            this.memoryData.saved = true;
+            this.memoryData.value =
+              this.memoryData.value + Number.parseInt(this.expresion);
             if (this.autoApply) {
-          this.applyResult();
-        }
+              this.applyResult();
+            }
           }
           break;
         case "m-":
-          
           if (!resultNotNumber) {
-            this.memoryData.saved=true;
-            this.memoryData.value = this.memoryData.value - Number.parseInt(this.expresion);
+            this.memoryData.saved = true;
+            this.memoryData.value =
+              this.memoryData.value - Number.parseInt(this.expresion);
             if (this.autoApply) {
-          this.applyResult();
-        }
+              this.applyResult();
+            }
           }
           break;
         case "ms":
           if (!resultNotNumber) {
-            this.memoryData.saved=true;
+            this.memoryData.saved = true;
             this.memoryData.value = this.expresion;
             if (this.autoApply) {
               this.applyResult();
@@ -455,13 +469,15 @@ export default {
           }
           break;
         case "mr":
-          if(this.memoryData.saved)
-          {
+          if (this.memoryData.saved) {
             //this.clear();
-            this.expresion = this.expresion=="0" ? this.memoryData.value+"": this.expresion+  this.memoryData.value+"";
+            this.expresion =
+              this.expresion == "0"
+                ? this.memoryData.value + ""
+                : this.expresion + this.memoryData.value + "";
             //this.prepareInput( this.memoryData.value);
           }
-            
+
           break;
       }
     },
@@ -632,6 +648,25 @@ export default {
     },
   },
   watch: {
+    enableKeyboard(newValue) {
+      console.log("what is this", newValue)
+      if (newValue) {
+        //document.body.style.overflow = "hidden";
+        //this.expresion = this.modelValue.toString();
+        //this.showStyles = true;
+        // если клавиатура не используется - не множим слушателей
+        if (this.enableKeyboard) { 
+          console.log("add hiiv enablees", this.enableKeyboard)
+          document.addEventListener("keydown", this.keyboardHandler);
+        }
+      } else {
+        //document.body.style.overflow = "initial";
+        //if (this.enableKeyboard) {
+          console.log("remove hiiv enablees")
+          document.removeEventListener("keydown", this.keyboardHandler);
+        //}
+      }
+    },
     show(newValue) {
       if (newValue) {
         document.body.style.overflow = "hidden";
@@ -639,11 +674,13 @@ export default {
         this.showStyles = true;
         // если клавиатура не используется - не множим слушателей
         if (this.enableKeyboard) {
+          console.log("add hiiv showws")
           document.addEventListener("keydown", this.keyboardHandler);
         }
       } else {
         document.body.style.overflow = "initial";
         if (this.enableKeyboard) {
+          console.log("remove hiiv showws")
           document.removeEventListener("keydown", this.keyboardHandler);
         }
       }
