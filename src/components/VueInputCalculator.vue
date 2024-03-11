@@ -76,7 +76,7 @@ export default {
     },
     place: {
       type: String,
-      default: 'in-place'
+      default: 'modal'
     }
   },
   data() {

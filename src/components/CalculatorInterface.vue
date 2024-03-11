@@ -17,7 +17,6 @@
               >{{ log }}</span
             >
           </div>
- {{enableKeyboard}}
           <input
             readonly
             type="text"
@@ -316,7 +315,9 @@ export default {
     };
   },
   mounted(){
+    if (this.enableKeyboard) {
     document.addEventListener("keydown", this.keyboardHandler);
+    }
   },
   methods: {
     keyboardHandler(event) {
